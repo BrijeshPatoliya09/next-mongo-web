@@ -1,0 +1,30 @@
+.intro {
+  height: 100%;
+}
+
+.intro table td,
+.intro table th {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.intro thead th {
+  color: #fff;
+}
+
+.intro .card {
+  border-radius: .5rem;
+}
+
+.intro .table-scroll {
+  border-radius: .5rem;
+}
+
+.intro .table-scroll table thead th {
+  font-size: 1.25rem;
+}
+.intro thead {
+  top: 0;
+  position: sticky;
+}

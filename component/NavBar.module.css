@@ -1,0 +1,41 @@
+.rainbow{
+    background:
+    linear-gradient(
+      to right,
+      rgba(100, 200, 200, 0),
+      rgba(100, 200, 200, 0)
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 0, 0, 1),
+      rgb(45, 65, 242),
+      rgb(100, 200, 200)
+  );
+  background-size: 100% 3px, 0 3px;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+  transition: all 0.4s !important;
+}
+
+.active{
+    background:
+    linear-gradient(
+      to right,
+      rgba(255, 0, 0, 1),
+      rgb(45, 65, 242),
+      rgb(100, 200, 200)
+  );
+  background-size: 100% 3px, 0 3px;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+}
+
+.rainbow:hover {
+    background-size: 0 3px, 100% 3px;
+    background:
+    linear-gradient(
+      to right,
+      rgba(100, 200, 200, 1),
+      rgba(100, 200, 200, 1)
+    ),
+  }

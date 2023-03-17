@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+.prd_list {
+  margin: 0;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5385;
+  color: #333;
+  text-align: left;
+  background-color: #f5f5f5;
+}
+
+.prd_list .mt-50 {
+  margin-top: 50px;
+}
+.prd_list .mb-50 {
+  margin-bottom: 50px;
+}
+
+.prd_list .bg-teal-400 {
+  background-color: #26a69a;
+}
+
+.prd_list a {
+  text-decoration: none !important;
+}
+
+.prd_list .fa {
+  color: red;
+}
+
+.prd_list .h3{
+    font-weight: 900;
+}
+.prd_list .views{
+    font-size: 0.85rem;
+}
+.prd_list .btn{
+    color: #666;
+    font-size: 0.85rem;
+}
+.prd_list .btn:hover{
+    color: #61b15a;
+}
+.prd_list .green-label{
+    background-color: #defadb;
+    color: #48b83e;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    margin: 0 3px;
+}
+.prd_list .radio,.checkbox{
+    padding: 6px 10px;
+}
+.prd_list .border{
+    border-radius: 12px;
+}
+.prd_list .options{
+    position: relative;
+    padding-left: 25px;
+}
+.prd_list .radio label,
+.prd_list .checkbox label{
+    display: block;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 0;
+}
+.prd_list .options input{
+    opacity: 0;
+}
+.prd_list .checkmark {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+}
+.prd_list .options input:checked ~ .checkmark:after {
+    display: block;
+}
+.prd_list .options .checkmark:after{
+    content: "";
+	width: 9px;
+    height: 9px;
+    display: block;
+	background: white;
+    position: absolute;
+    top: 52%;
+	left: 51%;
+    border-radius: 50%;
+    transform: translate(-50%,-50%) scale(0);
+    transition: 300ms ease-in-out 0s;
+}
+.options input[type="radio"]:checked ~ .checkmark{
+    background: #61b15a;
+    transition: 300ms ease-in-out 0s;
+}
+.prd_list .options input[type="radio"]:checked ~ .checkmark:after{
+    transform: translate(-50%,-50%) scale(1);
+}
+.prd_list .count{
+    font-size: 0.8rem;
+}
+.prd_list label{
+    cursor: pointer;
+}
+.prd_list .tick{
+    display: block;
+    position: relative;
+    padding-left: 23px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin: 0;
+}
+.prd_list .tick input{
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+.prd_list .check{
+    position: absolute;
+    top: 1px;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+.prd_list .tick:hover input ~ .check {
+    background-color: #f3f3f3;
+}
+.prd_list .tick input:checked ~ .check {
+    background-color: #61b15a;
+}
+.prd_list .check:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+.prd_list .tick input:checked ~ .check:after {
+    display: block;
+    transform: rotate(45deg) scale(1);
+} 
+.prd_list .tick .check:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg) scale(2);
+}
+.prd_list #country{
+    font-size: 0.8rem;
+    border: none;
+    border-left: 1px solid #ccc;
+    padding: 0px 10px;
+    outline: none;
+    font-weight: 900;
+}
+.prd_list .close{
+    font-size: 1.2rem;
+}
+.prd_list div.text-muted{
+    font-size: 0.85rem;
+}
+.prd_list #sidebar{
+    width: 25%;
+    float: left;
+}
+.prd_list .category{
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.prd_list .list-group-item{
+    border: none;
+    padding: 0.3rem 0.4rem 0.3rem 0rem;
+}
+.prd_list .badge-primary{
+    background-color: #defadb;
+    color: #48b83e
+}
+.prd_list .brand .check{
+    background-color: #fff;
+    top: 3px;
+    border: 1px solid #666;
+}
+.prd_list .brand .tick{
+    font-size: 1rem;
+    padding-left: 25px;
+}
+.prd_list .rating .check{
+    background-color: #fff;
+    border: 1px solid #666;
+    top: 0;
+}
+.prd_list .rating .tick{
+    font-size: 0.9rem;
+    padding-left: 25px;
+}
+.prd_list .rating .fas.fa-star{
+    color: #ffbb00;
+    padding: 0px 3px;
+}
+.prd_list .brand .tick:hover input ~ .check,
+.prd_list .rating .tick:hover input ~ .check{
+    background-color: #f9f9f9;
+}
+.prd_list .brand .tick input:checked ~ .check,
+.prd_list .rating .tick input:checked ~ .check{
+    background-color: #61b15a;
+}
