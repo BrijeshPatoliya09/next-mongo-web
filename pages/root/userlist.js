@@ -1,4 +1,5 @@
 import moment from "moment";
+import { parseCookies } from "nookies";
 import React, { useState } from "react";
 import baseUrl from "../../helpers/baseUrl";
 
@@ -130,6 +131,27 @@ const UserList = ({ userListData }) => {
 };
 
 export async function getServerSideProps(ctx) {
+  const { token } = parseCookies(ctx);
+
+  if (!token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+
+  const tokenData = token ? JSON.parse(token) : "";
+  if (tokenData.user.role !== "root") {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/account",
+      },
+    };
+  }
+
   const res = await fetch(`${baseUrl}/api/user`);
   const data = await res.json();
 

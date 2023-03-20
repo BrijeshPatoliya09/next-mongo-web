@@ -20,6 +20,11 @@ const userSchema = new Schema({
         required: true,
         default: "user",
         enum: ["user", "admin", "root"]
+    },
+    balance: {
+        type: String,
+        required: true,
+        default: "0"
     }
 }, {
     timestamps: true

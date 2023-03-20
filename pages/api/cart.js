@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"; 
 import mongoose from "mongoose";
 import initDB from "../../helpers/initDB";
 import Cart from "../../models/Cart";

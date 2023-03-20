@@ -225,12 +225,12 @@ const cart = ({ products, token, payHistoryData }) => {
                               <button
                                 onClick={() =>
                                   updateQty(
-                                    data[0].products[i].quantity - 1,
+                                    data[0].products.filter((val) => val.product === v._id)[0].quantity - 1,
                                     v._id
                                   )
                                 }
                                 className="btn btn-link px-2"
-                                disabled={data[0].products[i].quantity <= 1}
+                                disabled={data[0].products.filter((val) => val.product === v._id)[0].quantity <= 1}
                               >
                                 <i className="bi bi-dash-lg"></i>
                               </button>
@@ -238,7 +238,11 @@ const cart = ({ products, token, payHistoryData }) => {
                               <input
                                 id="form1"
                                 name="quantity"
-                                value={data[0].products[i].quantity}
+                                value={
+                                  v.stock !== 0
+                                    ? data[0].products.filter((val) => val.product === v._id)[0].quantity
+                                    : 0
+                                }
                                 disabled
                                 type="text"
                                 className="form-control form-control-sm text-center"
@@ -247,35 +251,42 @@ const cart = ({ products, token, payHistoryData }) => {
                               <button
                                 onClick={() =>
                                   updateQty(
-                                    data[0].products[i].quantity + 1,
+                                    data[0].products.filter((val) => val.product === v._id)[0].quantity + 1,
                                     v._id
                                   )
                                 }
                                 className="btn btn-link px-2"
                                 disabled={
-                                  data[0].products[i].quantity >= v.stock
+                                  data[0].products.filter((val) => val.product === v._id)[0].quantity >= v.stock
                                 }
                               >
                                 <i className="bi bi-plus-lg"></i>
                               </button>
                             </div>
-                            <div className="col-md-3 col-lg-3 col-xl-3 offset-lg-1">
-                              <p
-                                className="item-price mb-0"
-                                style={{ fontSize: "15px" }}
-                              >
-                                <strike>
-                                  ${v.price * data[0].products[i].quantity}
-                                </strike>{" "}
-                                <span className="ms-2 text-success">
-                                  $
-                                  {(
-                                    (v.price - (v.price * v.discount) / 100) *
-                                    data[0].products[i].quantity
-                                  ).toFixed(2)}
-                                </span>
-                              </p>
-                            </div>
+
+                            {v.stock == 0 ? (
+                              <div className="col-md-3 col-lg-3 col-xl-3 offset-lg-1">
+                                <p className="text-danger">Out Of Stock</p>
+                              </div>
+                            ) : (
+                              <div className="col-md-3 col-lg-3 col-xl-3 offset-lg-1">
+                                <p
+                                  className="item-price mb-0"
+                                  style={{ fontSize: "15px" }}
+                                >
+                                  <strike>
+                                    ${v.price * data[0].products[i].quantity}
+                                  </strike>{" "}
+                                  <span className="ms-2 text-success">
+                                    $
+                                    {(
+                                      (v.price - (v.price * v.discount) / 100) *
+                                      data[0].products[i].quantity
+                                    ).toFixed(2)}
+                                  </span>
+                                </p>
+                              </div>
+                            )}
                             <div className="col-md-1 col-lg-1 col-xl-1 text-end">
                               <button
                                 onClick={() => removeCartData(v._id)}
@@ -677,6 +688,7 @@ const cart = ({ products, token, payHistoryData }) => {
                 type="button"
                 onClick={paymentHandler}
                 className="btn btn-success"
+                data-bs-dismiss="modal"
               >
                 Pay
               </button>
@@ -734,6 +746,7 @@ const cart = ({ products, token, payHistoryData }) => {
                 type="button"
                 onClick={orderVerifyHandler}
                 className="btn btn-primary"
+                data-bs-dismiss="modal"
               >
                 Verify
               </button>

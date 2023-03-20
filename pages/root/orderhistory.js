@@ -102,6 +102,16 @@ export async function getServerSideProps(ctx) {
     };
   }
 
+  const tokenData = token ? JSON.parse(token) : "";
+  if (tokenData.user.role !== "root") {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/account",
+      },
+    };
+  }
+
   const res2 = await fetch(`${baseUrl}/api/payment`);
   const orderHistoryData = await res2.json();
 

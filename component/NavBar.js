@@ -7,8 +7,8 @@ import cookie from "js-cookie";
 
 const NavBar = () => {
   const router = useRouter();
-  const {token} = parseCookies();
-  const userData = token ? JSON.parse(token) : '';
+  const { token } = parseCookies();
+  const userData = token ? JSON.parse(token) : "";
 
   return (
     <section className="bg-dark text-white">
@@ -19,7 +19,7 @@ const NavBar = () => {
             <span className="text-white">- Commerce</span>
           </Link>
           <div className="d-flex" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-4">
+            <ul className="navbar-nav">
               <li className="nav-item">
                 <Link
                   className={`nav-link text-white ${
@@ -32,27 +32,90 @@ const NavBar = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link
-                  className={`nav-link text-white ${
-                    router.pathname === "/product"
-                      ? classes.active
-                      : classes.rainbow
-                  }`}
-                  aria-current="page"
-                  href="/product"
-                >
-                  Product
-                </Link>
+                <div className="dropdown">
+                  <button
+                    className="btn text-white"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Electronics Product
+                  </button>
+                  <ul className="dropdown-menu">
+                    <li>
+                      <Link
+                        href="/product/catagory/TV & Appliances"
+                        className="dropdown-item"
+                      >
+                        Tv & Appliances
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/product/catagory/Mobile & Laptops"
+                        className="dropdown-item"
+                      >
+                        Mobile & Laptops
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/product/catagory/Electronic Ascessories"
+                        className="dropdown-item"
+                      >
+                        Electronic Acessaries
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
               </li>
               <li className="nav-item">
-                <a className="nav-link text-white" aria-current="page" href="#">
-                  About Us
-                </a>
+                <div className="dropdown">
+                  <button
+                    className="btn text-white"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Garments & Fashion
+                  </button>
+                  <ul className="dropdown-menu">
+                    <li>
+                      <Link
+                        href="/product/catagory/Man"
+                        className="dropdown-item"
+                      >
+                        Man
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/product/catagory/Women"
+                        className="dropdown-item"
+                      >
+                        Women
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/product/catagory/Kids & Baby"
+                        className="dropdown-item"
+                      >
+                        Kids & Baby
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
               </li>
               <li className="nav-item">
-                <a className="nav-link text-white" aria-current="page" href="#">
-                  Contect Us
-                </a>
+                <div className="dropdown">
+                  <Link
+                    href="/product/catagory/Sports, Books & more"
+                    className="btn text-white"
+                  >
+                    Sports, Books & More
+                  </Link>
+                </div>
               </li>
             </ul>
           </div>
@@ -62,9 +125,44 @@ const NavBar = () => {
                 <i className="bi bi-cart"></i>
               </button>
             </Link>
-            <button className="text-white btn shadow-none">
-              <i className="bi bi-search"></i>
-            </button>
+            <div className="dropdown">
+              <button
+                className="text-white btn shadow-none"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {userData && userData.user.role === "admin" && "Seller"}
+                {userData && userData.user.role === "root" && "Owner"}
+              </button>
+              {userData && userData.user.role === "admin" && (
+                <ul className="dropdown-menu">
+                  <li>
+                    <Link href="/admin/productList" className="dropdown-item">
+                      Products Listed
+                    </Link>
+                  </li>
+                </ul>
+              )}
+              {userData && userData.user.role === "root" && (
+                <ul className="dropdown-menu">
+                  <li>
+                    <Link href="/root/orderhistory" className="dropdown-item">
+                      Order History
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/root/prodlist" className="dropdown-item">
+                      Product List
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/root/userlist" className="dropdown-item">
+                      User List
+                    </Link>
+                  </li>
+                </ul>
+              )}
+            </div>
             {token ? (
               <>
                 <button

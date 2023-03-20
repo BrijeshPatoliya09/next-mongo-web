@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import initDB from "../../helpers/initDB";
 import Paymenthistory from "../../models/PaymentHistory";
 import Product from "../../models/Product";
+import User from "../../models/User";
 import speakeasy from "speakeasy";
 import qrcode from "qrcode";
 
@@ -59,9 +60,12 @@ export default async (req, res) => {
       try {
         await Paymenthistory(body).save();
         body.products.map(async (val) => {
-          await Product.findOneAndUpdate({ _id: val.product }, {
-            $inc: {stock: -val.quantity}
-          });
+          await Product.findOneAndUpdate(
+            { _id: val.product },
+            {
+              $inc: { stock: -val.quantity },
+            }
+          );
         });
         res.status(200).json({ message: "Payment made successfully" });
       } catch (err) {
@@ -85,6 +89,32 @@ export default async (req, res) => {
             await Paymenthistory.findByIdAndUpdate(orderHisId, {
               delivery: "Delivered Successfully",
             });
+            orderHisData.products.map(async (v) => {
+              const prodData = await Product.findById(v.product);
+              const totalAmount =
+                (prodData.price - (prodData.price * prodData.discount) / 100) *
+                v.quantity;
+
+              const sellerAmt = (
+                totalAmount -
+                (totalAmount * 10) / 100
+              ).toFixed(2);
+              await User.findOne(
+                {
+                  _id: prodData.seller,
+                },
+                (err, data) => {
+                  if (!err) {
+                    data.balance = Number(data.balance) + Number(sellerAmt);
+                    data.save();
+                  } else {
+                    return res
+                      .status(400)
+                      .json({ error: "Something went wrong" });
+                  }
+                }
+              );
+            });
             return res.status(200).json({ message: "Oreder verified" });
           }
           return res.status(404).json({ message: "not verified" });
@@ -96,7 +126,7 @@ export default async (req, res) => {
             delivery: "Shipped",
             qrCode: data,
             secrete: tem_secret.base32,
-          }); 
+          });
         });
         res.status(200).json({ message: "Order will be Departed" });
       } catch (err) {
