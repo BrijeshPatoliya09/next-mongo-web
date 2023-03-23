@@ -6,6 +6,9 @@ import Product from "../../models/Product";
 import User from "../../models/User";
 import speakeasy from "speakeasy";
 import qrcode from "qrcode";
+import baseUrl from "../../helpers/baseUrl";
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 initDB();
 
@@ -58,8 +61,29 @@ export default async (req, res) => {
 
     case "POST":
       try {
-        await Paymenthistory(body).save();
-        body.products.map(async (val) => {
+        const { paymentData, proData } = body;
+        await Paymenthistory(paymentData).save();
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          mode: "payment",
+          line_items: proData[0].productInfo.map((v) => {
+            return {
+              price_data: {
+                currency: "usd",
+                product_data: {
+                  name: v.name,
+                },
+                unit_amount: v.price * 100,
+              },
+              quantity: proData[0].products.filter(
+                (filt) => filt.product === v._id
+              )[0].quantity,
+            };
+          }),
+          success_url: `${baseUrl}/cart`,
+          cancel_url: `${baseUrl}/account`,
+        });
+        body.paymentData.products.map(async (val) => {
           await Product.findOneAndUpdate(
             { _id: val.product },
             {
@@ -67,8 +91,9 @@ export default async (req, res) => {
             }
           );
         });
-        res.status(200).json({ message: "Payment made successfully" });
+        res.status(200).json({ message: "Payment made successfully", url: session.url });
       } catch (err) {
+        console.log(err);
         return res.status(404).json({ error: "you must logged in" });
       }
       break;

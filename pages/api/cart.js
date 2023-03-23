@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken"; 
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import initDB from "../../helpers/initDB";
 import Cart from "../../models/Cart";
@@ -36,18 +36,32 @@ export default async (req, res) => {
       }
       break;
 
-      case "POST":
-        try {
+    case "POST":
+      try {
+        const { userId } = jwt.verify(authorization, process.env.JWT_SECRET);
+        if (body.length == 0) {
+          await Cart.findOneAndUpdate(
+            {user: userId},
+            { $set: { products: [] } },
+            { multi: true }
+          );
+          return res.status(200).json({ message: "Cart empty" });
+        } else {
           const { qty, productId } = body;
-          const { userId } = jwt.verify(authorization, process.env.JWT_SECRET);
-          const cart = await Cart.findOneAndUpdate({ user: userId, "products.product": productId },{"products.$.quantity": qty});
+          const cart = await Cart.findOneAndUpdate(
+            { user: userId, "products.product": productId },
+            { "products.$.quantity": qty }
+          );
 
-          res.status(200).json({ message: "Product added to cart", cart});
-        } catch (err) {
-          console.log(err);
-          return res.status(404).json({ error: "you must logged in" });
+          return res
+            .status(200)
+            .json({ message: "Product added to cart", cart });
         }
-        break;
+      } catch (err) {
+        console.log(err);
+        return res.status(404).json({ error: "you must logged in" });
+      }
+      break;
 
     case "PUT":
       try {

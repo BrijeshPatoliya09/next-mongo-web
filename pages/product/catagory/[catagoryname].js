@@ -10,7 +10,9 @@ import baseUrl from "../../../helpers/baseUrl";
 let initial = false;
 
 const CatagoryName = ({ products }) => {
+  console.log(products);
   const [data, setData] = useState(products);
+  const [page, setPage] = useState(1);
   const { token } = parseCookies();
   const tokenData = token ? JSON.parse(token) : "";
 
@@ -213,6 +215,47 @@ const CatagoryName = ({ products }) => {
         position: toast.POSITION.TOP_RIGHT,
       });
     }
+  };
+
+    const prevPageHandler = async () => {
+    const catag = router.query.catagoryname;
+    if (page !== 1) {
+      const res = await fetch(`${baseUrl}/api/product/catagory/${catag}`, {
+        method: "POST",
+        body: JSON.stringify(page - 1),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data22 = await res.json();
+      setData(data22);
+
+      setPage((pg) => pg - 1);
+    } else {
+      const res = await fetch(`${baseUrl}/api/product/catagory/${catag}`, {
+        method: "POST",
+        body: JSON.stringify(page),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data22 = await res.json();
+      setData(data22);
+    }
+  };
+
+  const nextPageHandler = async () => {
+    const catag = router.query.catagoryname;
+    const res = await fetch(`${baseUrl}/api/product/catagory/${catag}`, {
+      method: "POST",
+      body: JSON.stringify(page + 1),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data22 = await res.json();
+    setData(data22);
+    setPage((pg) => pg + 1);
   };
 
   return (
@@ -624,6 +667,10 @@ const CatagoryName = ({ products }) => {
                   </div>
                 );
               })}
+              <div className="d-flex justify-content-between mb-5">
+                <button onClick={prevPageHandler} disabled={page == 1} className="btn btn-warning text-white">Previous</button>
+                <button onClick={nextPageHandler} disabled={data.length < 10} className="btn btn-warning text-white">Next</button>
+              </div>
             </div>
           </div>
         </div>
@@ -635,7 +682,13 @@ const CatagoryName = ({ products }) => {
 
 export async function getServerSideProps(ctx) {
   const catagory = ctx.query.catagoryname;
-  const res = await fetch(`${baseUrl}/api/product/catagory/${catagory}`);
+  const res = await fetch(`${baseUrl}/api/product/catagory/${catagory}`, {
+    method: "POST",
+    body: JSON.stringify(1),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   const data = await res.json();
 
   return {

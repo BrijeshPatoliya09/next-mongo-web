@@ -2,6 +2,7 @@ import initDB from "../../helpers/initDB";
 import Product from "../../models/Product";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 initDB();
 
@@ -60,6 +61,21 @@ const saveProd = async (req, res) => {
     }
 
     const products = await Product(req.body).save();
+    stripe.products
+      .create({
+        id: products._id.toString(),
+        name: products.name,
+        description: products.description,
+        images: [products.image],
+      })
+      .then(async (product) => {
+        let priceData = await stripe.prices.create({
+          unit_amount: products.price * 100,
+          currency: "usd",
+          product: product.id,
+        });
+        stripe.products.update(product.id, { default_price: priceData.id });
+      });
     res.status(201).json(products);
   } catch (err) {
     console.log(err);
@@ -70,11 +86,11 @@ const editProd = async (req, res) => {
   const { status, prodId } = req.body;
 
   try {
-    if(req.body.id){
-      const {productData, id} = req.body 
+    if (req.body.id) {
+      const { productData, id } = req.body;
       await Product.findByIdAndUpdate(id, productData, {
         new: true,
-        runValidators: true
+        runValidators: true,
       });
       return res.status(201).json({ message: "Product Updated Successfully" });
     }

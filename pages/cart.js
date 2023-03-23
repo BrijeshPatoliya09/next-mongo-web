@@ -1,12 +1,15 @@
 import moment from "moment";
+import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
 import React, { useEffect, useState } from "react";
 import Rating from "react-rating";
+// import StripeCheckout from "react-stripe-checkout";
 import { toast, ToastContainer } from "react-toastify";
 import baseUrl from "../helpers/baseUrl";
 import classes from "../public/css/payment.module.css";
 
 const cart = ({ products, token, payHistoryData }) => {
+  const router = useRouter();
   const [data, setData] = useState(products);
   const [orderHistory, setOrderHistory] = useState(payHistoryData);
   const [qrData, setQrData] = useState("");
@@ -24,7 +27,6 @@ const cart = ({ products, token, payHistoryData }) => {
     state: "",
     zipCode: "",
   });
-  console.log(payHistoryData);
 
   const addressChangeHandler = (e) => {
     const { value, name } = e.target;
@@ -58,13 +60,15 @@ const cart = ({ products, token, payHistoryData }) => {
 
     const res = await fetch(`${baseUrl}/api/payment`, {
       method: "POST",
-      body: JSON.stringify(paymentData),
+      body: JSON.stringify({ paymentData, proData: data }),
       headers: {
         "Content-Type": "application/json",
       },
     });
 
     const paydata = await res.json();
+    router.push(paydata.url)
+    
 
     if (paydata.message) {
       const res2 = await fetch(`${baseUrl}/api/payment`, {
@@ -75,17 +79,47 @@ const cart = ({ products, token, payHistoryData }) => {
 
       const payHistoryData = await res2.json();
       setOrderHistory(payHistoryData);
+
+      const res3 = await fetch(`${baseUrl}/api/cart`, {
+        method: "POST",
+        body: JSON.stringify([]),
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await res3.json();
+
+      if (data.message) {
+        const res5 = await fetch(`${baseUrl}/api/cart`, {
+          method: "GET",
+          headers: {
+            Authorization: token,
+          },
+        });
+        const data5 = await res5.json();
+        setData(data5);
+      }
     }
   };
 
   const prodTotal = data[0].productInfo
-    .map((v, i) => v.price * data[0].products[i].quantity)
+    .map((v, i) => {
+      if (v.stock == 0) {
+        return v.price * 0;
+      }
+      return v.price * data[0].products[i].quantity;
+    })
     .reduce((v, data) => v + data, 0);
 
   const discTotal = data[0].productInfo
-    .map(
-      (v, i) => ((v.price * v.discount) / 100) * data[0].products[i].quantity
-    )
+    .map((v, i) => {
+      if (v.stock == 0) {
+        return 0;
+      }
+      return ((v.price * v.discount) / 100) * data[0].products[i].quantity;
+    })
     .reduce((v, data) => v + data, 0);
 
   const gstTotal = (prodTotal * 18) / 100;
@@ -225,12 +259,18 @@ const cart = ({ products, token, payHistoryData }) => {
                               <button
                                 onClick={() =>
                                   updateQty(
-                                    data[0].products.filter((val) => val.product === v._id)[0].quantity - 1,
+                                    data[0].products.filter(
+                                      (val) => val.product === v._id
+                                    )[0].quantity - 1,
                                     v._id
                                   )
                                 }
                                 className="btn btn-link px-2"
-                                disabled={data[0].products.filter((val) => val.product === v._id)[0].quantity <= 1}
+                                disabled={
+                                  data[0].products.filter(
+                                    (val) => val.product === v._id
+                                  )[0].quantity <= 1
+                                }
                               >
                                 <i className="bi bi-dash-lg"></i>
                               </button>
@@ -240,7 +280,9 @@ const cart = ({ products, token, payHistoryData }) => {
                                 name="quantity"
                                 value={
                                   v.stock !== 0
-                                    ? data[0].products.filter((val) => val.product === v._id)[0].quantity
+                                    ? data[0].products.filter(
+                                        (val) => val.product === v._id
+                                      )[0].quantity
                                     : 0
                                 }
                                 disabled
@@ -251,13 +293,17 @@ const cart = ({ products, token, payHistoryData }) => {
                               <button
                                 onClick={() =>
                                   updateQty(
-                                    data[0].products.filter((val) => val.product === v._id)[0].quantity + 1,
+                                    data[0].products.filter(
+                                      (val) => val.product === v._id
+                                    )[0].quantity + 1,
                                     v._id
                                   )
                                 }
                                 className="btn btn-link px-2"
                                 disabled={
-                                  data[0].products.filter((val) => val.product === v._id)[0].quantity >= v.stock
+                                  data[0].products.filter(
+                                    (val) => val.product === v._id
+                                  )[0].quantity >= v.stock
                                 }
                               >
                                 <i className="bi bi-plus-lg"></i>
@@ -378,10 +424,14 @@ const cart = ({ products, token, payHistoryData }) => {
                         <div className="d-grid">
                           <button
                             type="button"
+                            // onClick={() => StripeCheckout()}
                             className="btn btn-dark btn-block btn-lg"
                             data-mdb-ripple-color="dark"
                             data-bs-toggle="modal"
                             data-bs-target="#exampleModal"
+                            disabled={
+                              prodTotal - discTotal + gstTotal + delCharge == 0
+                            }
                           >
                             BUY
                           </button>

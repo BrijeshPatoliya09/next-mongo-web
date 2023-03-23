@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/font": "13.1.5",
+    "@stripe/stripe-js": "^1.50.0",
     "bcrypt": "^5.1.0",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
